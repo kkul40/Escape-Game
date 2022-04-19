@@ -1217,7 +1217,13 @@ class Main():
 
         for e in pygame.event.get(): # İNPUT KONTROLLERİ
             if e.type == pygame.QUIT:
-                print("MİNİNM FPS : {}".format(minfps))
+                # ORTALAMA FPS HESAPLAMA
+                tut = 0
+                for x in ortalama_fps:
+                    tut += x
+                tut /= len(ortalama_fps)
+                
+                print("ORTALAMA FPS : {}".format(int(tut)))
                 pygame.quit()
                 sys.exit()
             # KARAKTER HAREKET ETTİRME VE ÖZELLİKLER
@@ -1463,29 +1469,29 @@ class Main():
     def Reset(self):
         self.sound.reset()
         main_sıfırla()
-
-pygame.init()
-ekran = pygame.display.set_mode((900,900))
-clock = pygame.time.Clock()
-pygame.mouse.set_visible(False)
-
 # MAİNİ RESETLEYEREK OYUNA RESET ATMA
 def main_sıfırla():
     global main
     main = Main()
     choice_bg()
-    
+# BACKGROUND DEĞİŞTİRME
 def choice_bg():
     global background
     background = pygame.image.load("Assets/background/Ground{}.png".format(rnd.randint(0,5))).convert()
+    
+pygame.init()
+ekran = pygame.display.set_mode((900,900))
+clock = pygame.time.Clock()
+pygame.mouse.set_visible(False)
+
 
 choice_bg()# RANDOM ARKA PLAN SEÇ
 main_sıfırla()# MAİN BAŞLATMA
 
 getTicksLastFrame = 0
 deltaTime = 0
-minfps = 500
 
+ortalama_fps = []
 last_time = 0
 fps = 0
 dT = 0
@@ -1495,22 +1501,20 @@ while run:
     # ARKAPLAN RENGİ
     ekran.blit(background, (0,0))
     #ekran.fill((42,42,42))
-    if fps < minfps and fps != 0:
-        minfps = fps
-
+        
     # GÖSTERGELER
     if pygame.time.get_ticks() - last_time >=200:
         last_time = pygame.time.get_ticks()
         fps = int(clock.get_fps())
         dT = deltaTime
+        ortalama_fps.append(fps)
     
     pygame.draw.rect(ekran, (0,0,0), (0,860,100,50))# GÖSTERGE ARKAPLANI
     main.panele_yazdır(main.font3,"FPS:{}".format(fps),(255, 255, 255), (50, 875), False)
     main.panele_yazdır(main.font3,"GEC:{}".format(dT),(255, 255, 255), (50, 890), False)
     
-    #print(clock.get_fps())
+    # DELTA TİME
     t = pygame.time.get_ticks()
-    # deltaTime in seconds.
     deltaTime = (t - getTicksLastFrame) / 1000.0
     getTicksLastFrame = t
     
@@ -1519,6 +1523,6 @@ while run:
 
     main.mouse_pos = pygame.mouse.get_pos()
 
-    # EKRAN YENİLEME VE FPS
+    # EKRAN YENİLEME VE FPS SABİTLEME
     pygame.display.update()
     clock.tick()
