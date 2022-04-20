@@ -1140,16 +1140,23 @@ class Main():
         # FARE
         self.mouse_buttons = pygame.mouse.get_pressed()
         self.mouse_pos = [0,0]
+        self.fare_rect = pygame.Rect(self.mouse_pos[0],self.mouse_pos[1],1,1)
+        
 
         self.TF = [True, False]
 
         # FONT
         self.font = pygame.freetype.Font("Daydream.ttf", 48)
         self.font2 = pygame.freetype.Font("Daydream.ttf", 24)
+        self.font22 = pygame.freetype.Font("Daydream.ttf", 30)
         self.font3 = pygame.freetype.Font("Daydream.ttf", 8)
         self.text_y = 0
         self.text_vel = 60
         self.temp = 0
+        
+        # YAZI RECK
+        self.rest_rect = pygame.Rect(0,0,0,0)
+        self.quit_rect = pygame.Rect(0,0,0,0)
 
         # HİT POİNT AÇ KAPA (H)
         self.hit_point = False
@@ -1227,6 +1234,14 @@ class Main():
                 pygame.quit()
                 sys.exit()
             # KARAKTER HAREKET ETTİRME VE ÖZELLİKLER
+            if e.type == pygame.MOUSEBUTTONDOWN and self.yandın:
+                if e.button == 1 and self.rest_rect.colliderect(self.fare_rect):
+                    self.sound.reset()
+                    main_sıfırla()
+                elif e.button == 1 and self.quit_rect.colliderect(self.fare_rect):
+                    self.fade_bool = True
+                    self.set_fade_alpha = 0
+                    self.fade_sett = 1
             if e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_h: # HİT POİNT AÇ-KAPA
                     self.hit_point = not self.hit_point
@@ -1388,8 +1403,20 @@ class Main():
                 self.panele_yazdır(self.font,"YANDIN", (255,0,0), (450, 310 + self.text_y), True)
                 self.panele_yazdır(self.font,"SKOR : {}".format(self.skor), (255,255,255), (450, 410 + self.text_y), True)
                 self.panele_yazdır(self.font,"GECEN SURE : {}".format(self.gecen_sure_tut), (255,255,255), (450, 510 + self.text_y), True)
-                self.panele_yazdır(self.font2,"Space to Restart", (0,191,255), (250, 610 + self.text_y),True)
-                self.panele_yazdır(self.font2,"Esc To Quit", (0,191,255), (650, 610 + self.text_y), True)
+                
+                # SPACE VE ESC TUŞLARI KOORDİNATLARI VE FARE İLE ETKİLEŞİM
+                self.rest_rect = pygame.Rect(50, 580 + self.text_y,400,50)
+                self.quit_rect = pygame.Rect(520, 580 + self.text_y,260,50)
+                
+                if self.rest_rect.colliderect(self.fare_rect):
+                    self.panele_yazdır(self.font22,"Space to Restart", (30,221,255), (250, 610 + self.text_y),True)
+                else:
+                    self.panele_yazdır(self.font2,"Space to Restart", (0,191,255), (250, 610 + self.text_y),True)
+                
+                if self.quit_rect.colliderect(self.fare_rect):
+                    self.panele_yazdır(self.font22,"Esc To Quit", (30,221,255), (650, 610 + self.text_y), True)
+                else:
+                    self.panele_yazdır(self.font2,"Esc To Quit", (0,191,255), (650, 610 + self.text_y), True)
 
         # FADE EKRAN
         if self.fade_bool:
@@ -1414,6 +1441,7 @@ class Main():
                     
         # FARE TAKİP ETME
         ekran.blit(self.cursor_img, (self.mouse_pos[0], self.mouse_pos[1]))
+        self.fare_rect = pygame.Rect(self.mouse_pos[0],self.mouse_pos[1],1,1)
 
         # KARAKTER ORTA NOKTASI
         #pygame.draw.rect(ekran, (255,255,255), (self.dude.x-2, self.dude.y-2, 4,4))
