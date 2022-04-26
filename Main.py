@@ -1238,7 +1238,7 @@ class Main():
                 if e.button == 1 and self.rest_rect.colliderect(self.fare_rect):
                     self.sound.reset()
                     main_sıfırla()
-                elif e.button == 1 and self.quit_rect.colliderect(self.fare_rect):
+                elif e.button == 1 and self.quit_rect.colliderect(self.fare_rect) and not self.fade_bool:
                     self.fade_bool = True
                     self.set_fade_alpha = 0
                     self.fade_sett = 1
